@@ -1,0 +1,1 @@
+print("Projeto de rede neural iniciado com sucesso!")

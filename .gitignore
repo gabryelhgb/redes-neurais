@@ -1,0 +1,29 @@
+# Ambientes virtuais do Python 
+.venv/
+venv/
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Variáveis de Ambiente
+.env
+.env.local
+
+# Dependências e arquivos do Next.js
+node_modules/
+.next/
+out/
+
+# Arquivos dos editores
+.vscode/
+.idea/
+
+# Arquivos do Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos internos de ferramentas de IA
+.openai/
+.codex/
