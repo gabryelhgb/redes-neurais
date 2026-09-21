@@ -27,11 +27,16 @@ def funcao_ativacao(somatorio):
     else:
         return -1
 
+def fazer_previsao(entrada, pesos_atuais):
+    somatorio = calcular_somatoria(entrada, pesos_atuais)
+    resposta = funcao_ativacao(somatorio)
+
+    return resposta
+
 primeira_entrada = entradas[0]
 
-somatorio = calcular_somatoria(primeira_entrada, pesos)
-resposta_rede = funcao_ativacao(somatorio)
+resposta_rede = fazer_previsao(primeira_entrada, pesos)
 
 print("Primeira entrada:", primeira_entrada)
-print("Somatório:", somatorio)
 print("Resposta da rede:", resposta_rede)
+
