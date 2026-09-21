@@ -21,8 +21,17 @@ def calcular_somatoria(entrada, pesos_atuais):
 
     return somatorio
 
+def funcao_ativacao(somatorio):
+    if somatorio >= 0:
+        return 1
+    else:
+        return -1
+
 primeira_entrada = entradas[0]
+
 somatorio = calcular_somatoria(primeira_entrada, pesos)
+resposta_rede = funcao_ativacao(somatorio)
 
 print("Primeira entrada:", primeira_entrada)
 print("Somatório:", somatorio)
+print("Resposta da rede:", resposta_rede)
