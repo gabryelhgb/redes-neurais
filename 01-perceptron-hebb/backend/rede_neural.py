@@ -13,15 +13,16 @@ print("Entradas:", entradas)
 print("Saídas desejadas:", saidas_desejadas)
 print("Pesos iniciais:", pesos)
 
-primeira_entrada = entradas[0]
+def calcular_somatoria(entrada, pesos_atuais):
+    somatorio = 0
 
-somatorio = (
-    primeira_entrada[0] * pesos[0]
-    + primeira_entrada[1] * pesos[1]
-    + primeira_entrada[2] * pesos[2]
-    + primeira_entrada[3] * pesos[3]
-    + primeira_entrada[4] * pesos[4]
-)
+    for indice in range(len(entrada)):
+        somatorio += entrada[indice] * pesos_atuais[indice]
+
+    return somatorio
+
+primeira_entrada = entradas[0]
+somatorio = calcular_somatoria(primeira_entrada, pesos)
 
 print("Primeira entrada:", primeira_entrada)
 print("Somatório:", somatorio)
