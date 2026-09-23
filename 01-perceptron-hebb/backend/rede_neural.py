@@ -43,32 +43,27 @@ def atualizar_pesos(entrada, saida_desejada, resposta, pesos_atuais):
 
     return erro
 
+def treinar_um_ciclo():
+    erros_no_ciclo = 0
 
-primeira_entrada = entradas[0]
+    for indice in range(len(entradas)):
+        entrada = entradas[indice]
+        saida_desejada = saidas_desejadas[indice]
+        resposta = fazer_previsao(entrada, pesos)
 
-resposta_rede = fazer_previsao(primeira_entrada, pesos)
+        erro = atualizar_pesos(
+            entrada,
+            saida_desejada,
+            resposta,
+            pesos,
+        )
 
-print("Primeira entrada:", primeira_entrada)
-print("Resposta da rede:", resposta_rede)
+        if erro != 0:
+            erros_no_ciclo += 1
 
-indice_teste = 2
-entrada_teste = entradas[indice_teste]
-saida_teste = saidas_desejadas[indice_teste]
+    return erros_no_ciclo
 
-resposta_antes = fazer_previsao(entrada_teste, pesos)
+erros = treinar_um_ciclo()
 
-print()
-print("Entrada de teste:", entrada_teste)
-print("Saída desejada:", saida_teste)
-print("Resposta da rede antes do ajuste:", resposta_antes)
-
-erro = atualizar_pesos(
-    entrada_teste,
-    saida_teste,
-    resposta_antes,
-    pesos,
-)
-
-print("Erro", erro)
-print("Pesos após o ajuste:", pesos)
-print("Resposta da rede após o ajuste:", fazer_previsao(entrada_teste, pesos))
+print("Erros no ciclo", erros)
+print("Pesos após um ciclo:", pesos)
