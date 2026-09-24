@@ -63,7 +63,31 @@ def treinar_um_ciclo():
 
     return erros_no_ciclo
 
-erros = treinar_um_ciclo()
+def treinar_rede():
+    ciclos = 0
+    limite_ciclos = 100
 
-print("Erros no ciclo", erros)
-print("Pesos após um ciclo:", pesos)
+    while True:
+        ciclos += 1
+
+        erros_no_ciclo = treinar_um_ciclo()
+
+        print("Ciclo:", ciclos)
+        print("Erros no ciclo:", erros_no_ciclo)
+        print("Pesos atuais:", pesos)
+        print()
+
+        if erros_no_ciclo == 0:
+            break
+
+        if ciclos >= limite_ciclos:
+            print("Limite de ciclos atingido. A rede não convergiu.")
+            break
+
+    return ciclos
+
+quantidade_ciclos = treinar_rede()
+
+print("Treinamento Finalizado")
+print("Quantidade de ciclos:", quantidade_ciclos)
+print("Pesos finais:", pesos)
