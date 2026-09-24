@@ -111,6 +111,33 @@ def verificar_rede():
 
     return acertos
 
+def testar_novo_perfil():
+    print("Digite 1 para sim e -1 para não")
+
+    raciocinio_logico = int(input("Raciocínio lógico:"))
+    persistente = int(input("Persistente:"))
+    estudioso = int(input("Estudioso:"))
+    dicidido = int(input("Decidido:"))
+
+    entrada_teste = [
+        raciocinio_logico,
+        persistente,
+        estudioso,
+        dicidido,
+        1,  # Bias
+    ]
+
+    resposta = fazer_previsao(entrada_teste, pesos)
+
+    print()
+    print("Entrada de teste:", entrada_teste)
+    print("Resposta da rede:", resposta)
+
+    if resposta == 1:
+        print("Perfil compatível com Sistemas de Informação ou Computação.")
+    else:
+        print("Perfil compatível com Humanas.")
+
 quantidade_ciclos = treinar_rede()
 
 print("Treinamento Finalizado")
@@ -121,3 +148,5 @@ acertos = verificar_rede()
 
 print("Quantidade de acertos:", acertos)
 print("Quantidade de padrões:", len(entradas))
+
+testar_novo_perfil()
