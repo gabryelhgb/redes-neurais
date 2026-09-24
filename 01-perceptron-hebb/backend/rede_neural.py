@@ -33,6 +33,10 @@ def fazer_previsao(entrada, pesos_atuais):
 
     return resposta
 
+def calcular_erro(saida_desejada, resposta_rede):
+    erro = saida_desejada - resposta_rede
+    return erro
+
 def atualizar_pesos(entrada, saida_desejada, resposta, pesos_atuais):
     erro = saida_desejada - resposta
 
@@ -86,8 +90,34 @@ def treinar_rede():
 
     return ciclos
 
+def verificar_rede():
+    acertos = 0
+
+    for indice in range(len(entradas)):
+        entrada = entradas[indice]
+        saida_desejada = saidas_desejadas[indice]
+
+        resposta = fazer_previsao(entrada, pesos)
+        erro = calcular_erro(saida_desejada, resposta)
+
+        if erro == 0:
+            acertos += 1
+
+        print("Padrao:", indice + 1)
+        print("Saida desejada:", saida_desejada)
+        print("Resposta da rede", resposta)
+        print("Erro:", erro)
+        print()
+
+    return acertos
+
 quantidade_ciclos = treinar_rede()
 
 print("Treinamento Finalizado")
 print("Quantidade de ciclos:", quantidade_ciclos)
 print("Pesos finais:", pesos)
+
+acertos = verificar_rede()
+
+print("Quantidade de acertos:", acertos)
+print("Quantidade de padrões:", len(entradas))
