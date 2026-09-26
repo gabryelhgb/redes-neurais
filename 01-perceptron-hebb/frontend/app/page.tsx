@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const caracteristicas = [
   { nome: "Raciocínio lógico", id: "raciocinio" },
   { nome: "Persistente", id: "persistente" },
@@ -6,6 +10,33 @@ const caracteristicas = [
 ];
 
 export default function Home() {
+
+  const [respostas, setRespostas] = useState<number[] | null>(null);
+
+  function classificar(evento: React.FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+
+    const formulario = new FormData(evento.currentTarget);
+
+    const novasRespostas = [
+      formulario.get("raciocinio"),
+      formulario.get("persistente"),
+      formulario.get("estudioso"),
+      formulario.get("decidido"),
+    ].map(Number);
+
+    const dadosPerfil = {
+      raciocinio_logico: novasRespostas[0],
+      persistente: novasRespostas[1],
+      estudioso: novasRespostas[2],
+      decidido: novasRespostas[3],
+    };
+
+    console.log(dadosPerfil);
+
+    setRespostas(novasRespostas);
+  }
+
   return (
     <main className="min-h-screen bg-stone-100 px-6 py-12 text-stone-900">
       <section className="mx-auto max-w-2xl">
@@ -22,7 +53,7 @@ export default function Home() {
           a rede neural identifica maior compatibilidade.
         </p>
 
-        <form className="mt-8 space-y-5 rounded-2xl bg-white p-6 shadow-sm">
+        <form className="mt-8 space-y-5 rounded-2xl bg-white p-6 shadow-sm" onSubmit={classificar}>
           {caracteristicas.map((caracteristica) => (
             <fieldset
               key={caracteristica.id}
@@ -56,11 +87,18 @@ export default function Home() {
           ))}
 
           <button
-            type="button"
+            type="submit"
             className="min-h-11 rounded-lg bg-emerald-800 px-5 font-semibold text-white"
           >
             Classificar perfil
           </button>
+
+          {respostas && (
+            <p className="pt-2 text-sm text-stone-700">
+              Valores enviados: [{respostas.join(", ")}]
+            </p>
+          )}
+
         </form>
       </section>
     </main>
