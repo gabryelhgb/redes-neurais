@@ -148,7 +148,6 @@ export default function Home() {
               </p>
             </section>
           )}
-
         </form>
       </section>
     </main>
