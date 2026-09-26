@@ -9,11 +9,19 @@ const caracteristicas = [
   { nome: "Decidido", id: "decidido" },
 ];
 
+type ResultadoClassificacao = {
+  resposta: number;
+  perfil: string;
+};
+
 export default function Home() {
 
-  const [respostas, setRespostas] = useState<number[] | null>(null);
+  const [resultado, setResultado] =
+    useState<ResultadoClassificacao | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+  const [carregando, setCarregando] = useState(false);
 
-  function classificar(evento: React.FormEvent<HTMLFormElement>) {
+  async function classificar(evento: React.FormEvent<HTMLFormElement>) {
     evento.preventDefault();
 
     const formulario = new FormData(evento.currentTarget);
@@ -32,9 +40,32 @@ export default function Home() {
       decidido: novasRespostas[3],
     };
 
-    console.log(dadosPerfil);
+    setErro(null);
+    setResultado(null);
+    setCarregando(true);
 
-    setRespostas(novasRespostas);
+    try {
+      const respostaApi = await fetch("http://localhost:8000/classificar", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dadosPerfil),
+      });
+
+      if (!respostaApi.ok) {
+        throw new Error(`Erro HTTP ${respostaApi.status}`);
+      }
+
+      const dadosRetornados: ResultadoClassificacao = await respostaApi.json();
+      setResultado(dadosRetornados);
+    } catch {
+      setErro(
+        "Não foi possível classificar. Confira se a API está rodando e tente novamente."
+      );
+    } finally {
+      setCarregando(false);
+    }
   }
 
   return (
@@ -89,14 +120,18 @@ export default function Home() {
           <button
             type="submit"
             className="min-h-11 rounded-lg bg-emerald-800 px-5 font-semibold text-white"
+            disabled={carregando}
           >
-            Classificar perfil
+            {carregando ? "Classificando..." : "Classificar perfil"}
           </button>
 
-          {respostas && (
-            <p className="pt-2 text-sm text-stone-700">
-              Valores enviados: [{respostas.join(", ")}]
-            </p>
+          {erro && <p role="alert">{erro}</p>}
+
+          {resultado && (
+            <div aria-live="polite">
+              <p>Resposta da rede: {resultado.resposta}</p>
+              <p>Perfil compatível: {resultado.perfil}</p>
+            </div>
           )}
 
         </form>
