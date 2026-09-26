@@ -21,11 +21,6 @@ saidas_desejadas = [1, -1, -1, 1, -1, 1]
 pesos = [0, 0, 0, 0, 0]
 taxa_aprendizagem = 0.02
 
-print("Quantidade de pacientes: ", len(entradas))
-print("Quantidade de saídas: ", len(saidas_desejadas))
-print("Pesos iniciais: ", pesos)
-print("Taxa de aprendizagem: ", taxa_aprendizagem)
-
 def calcular_somatoria(entrada, pesos_atuais):
     somatorio = 0
 
@@ -76,8 +71,35 @@ def treinar_rede():
 
     return ciclos
 
+def classificar_paciente(caracteristicas):
+    entrada = caracteristicas + [1]
+    return fazer_previsao(entrada, pesos)
+
 
 ciclos = treinar_rede()
 
 print("Ciclos até convergência:", ciclos)
 print("Pesos finais:", [round(peso, 2) for peso in pesos])
+
+if __name__ == "__main__":
+    print("Quantidade de pacientes:", len(entradas))
+    print("Quantidade de saídas:", len(saidas_desejadas))
+    print("Pesos iniciais:", pesos)
+    print("Taxa de aprendizagem:", taxa_aprendizagem)
+
+    ciclos = treinar_rede()
+
+    casos_teste = [
+        ("Luís", [-1, -1, 1, 1]),
+        ("Laura", [1, 1, -1, 1]),
+    ]
+
+    for nome, caracteristicas in casos_teste:
+        resposta = classificar_paciente(caracteristicas)
+
+        if resposta == 1:
+            diagnostico = "Doente"
+        else:
+            diagnostico = "Saudável"
+
+        print(f"{nome}: {diagnostico} (resposta {resposta})")
