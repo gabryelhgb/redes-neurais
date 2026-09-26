@@ -128,10 +128,25 @@ export default function Home() {
           {erro && <p role="alert">{erro}</p>}
 
           {resultado && (
-            <div aria-live="polite">
-              <p>Resposta da rede: {resultado.resposta}</p>
-              <p>Perfil compatível: {resultado.perfil}</p>
-            </div>
+            <section
+              aria-live="polite"
+              className="rounded-2xl border border-stone-200 bg-stone-50 p-5"
+            >
+              <p className="text-sm font-semibold uppercase tracking-wide text-emerald-800">
+                Resultado da classificação
+              </p>
+
+              <h2 className="mt-2 text-2xl font-bold text-stone-900">
+                {resultado.perfil}
+              </h2>
+
+              <p className="mt-3 text-sm text-stone-600">
+                Saída da rede neural:{" "}
+                <span className="font-semibold text-stone-900">
+                  {resultado.resposta}
+                </span>
+              </p>
+            </section>
           )}
 
         </form>
