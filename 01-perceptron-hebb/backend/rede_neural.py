@@ -107,23 +107,29 @@ def verificar_rede():
 
     return acertos
 
+def classificar_perfil(caracteristicas):
+    entrada = caracteristicas + [1]
+    resposta = fazer_previsao(entrada, pesos)
+
+    return resposta
+
 def testar_novo_perfil():
     print("Digite 1 para sim e -1 para não")
 
-    raciocinio_logico = int(input("Raciocínio lógico:"))
-    persistente = int(input("Persistente:"))
-    estudioso = int(input("Estudioso:"))
-    dicidido = int(input("Decidido:"))
+    raciocinio_logico = int(input("Raciocínio lógico: "))
+    persistente = int(input("Persistente: "))
+    estudioso = int(input("Estudioso: "))
+    dicidido = int(input("Decidido: "))
 
-    entrada_teste = [
+    caracteristicas = [
         raciocinio_logico,
         persistente,
         estudioso,
         dicidido,
-        1,  # Bias
     ]
 
-    resposta = fazer_previsao(entrada_teste, pesos)
+    entrada_teste = caracteristicas + [1]
+    resposta = classificar_perfil(caracteristicas)
 
     print()
     print("Entrada de teste:", entrada_teste)
