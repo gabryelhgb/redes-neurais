@@ -75,12 +75,6 @@ def classificar_paciente(caracteristicas):
     entrada = caracteristicas + [1]
     return fazer_previsao(entrada, pesos)
 
-
-ciclos = treinar_rede()
-
-print("Ciclos até convergência:", ciclos)
-print("Pesos finais:", [round(peso, 2) for peso in pesos])
-
 if __name__ == "__main__":
     print("Quantidade de pacientes:", len(entradas))
     print("Quantidade de saídas:", len(saidas_desejadas))
@@ -88,6 +82,9 @@ if __name__ == "__main__":
     print("Taxa de aprendizagem:", taxa_aprendizagem)
 
     ciclos = treinar_rede()
+
+    print("Ciclos até convergência: ", ciclos)
+    print("Pesos finais: ", [round(peso, 2) for peso in pesos])
 
     casos_teste = [
         ("Luís", [-1, -1, 1, 1]),
