@@ -9,10 +9,6 @@ saidas_desejadas = [1, 1, -1, -1]
 
 pesos = [0, 0, 0, 0, 0]
 
-print("Entradas:", entradas)
-print("Saídas desejadas:", saidas_desejadas)
-print("Pesos iniciais:", pesos)
-
 def calcular_somatoria(entrada, pesos_atuais):
     somatorio = 0
 
@@ -138,15 +134,22 @@ def testar_novo_perfil():
     else:
         print("Perfil compatível com Humanas.")
 
-quantidade_ciclos = treinar_rede()
+def main():
+    print("\n=== Treinamento ===")
+    quantidade_ciclos = treinar_rede()
 
-print("Treinamento Finalizado")
-print("Quantidade de ciclos:", quantidade_ciclos)
-print("Pesos finais:", pesos)
+    print("Treinamento Finalizado")
+    print("\n=== Resultado final ===")
+    print("Quantidade de ciclos:", quantidade_ciclos)
+    print("Pesos finais:", pesos)
 
-acertos = verificar_rede()
+    acertos = verificar_rede()
 
-print("Quantidade de acertos:", acertos)
-print("Quantidade de padrões:", len(entradas))
+    print("Quantidade de acertos:", acertos)
+    print("Quantidade de padrões:", len(entradas))
 
-testar_novo_perfil()
+    print("\n=== Teste de novo perfil ===")
+    testar_novo_perfil()
+
+if __name__=="__main__":
+    main()
