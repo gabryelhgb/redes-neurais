@@ -77,6 +77,17 @@ def converter_grade_para_entrada(grade):
     entrada.append(1)  # bias
     return entrada
 
+def calcular_saida_linear(entrada, pesos_neuronio):
+    if len(entrada) != len(pesos_neuronio):
+        raise ValueError("A entrada e os pesos precisam ter o mesmo tamanho.")
+
+    somatorio = 0.0
+
+    for indice in range(len(entrada)):
+        somatorio += entrada[indice] * pesos_neuronio[indice]
+
+    return somatorio
+
 def preparar_treinamento(amostras):
     entradas_treinamento = []
     saidas_treinamento = []
@@ -122,3 +133,14 @@ if __name__ == "__main__":
     print("Pesos por neurônio", len(pesos[0]))
     print("Primeiro peso do neurônio A:", pesos[0][0])
     print("Peso do bias do neurônio A:", pesos[0][indice_bias])
+
+    entrada_exemplo = [1, -1, 1]
+    pesos_exemplo = [0.5, 0.25, 1.0]
+
+    saida_exemplo = calcular_saida_linear(
+        entrada_exemplo,
+        pesos_exemplo,
+    )
+
+    print("Saída linear do exemplo", saida_exemplo)
+    print("Saída inicial do neurônio A:", calcular_saida_linear(entrada_a, pesos[0]),)
