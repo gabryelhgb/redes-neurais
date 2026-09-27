@@ -25,6 +25,40 @@ saidas_desejadas = [
     [-1, -1, -1, -1, -1, -1,  1],  # K
 ]
 
+padrao_a_fonte_1 = [
+    "...#...",
+    "...#...",
+    "...#...",
+    "..#.#..",
+    "..#.#..",
+    ".#...#.",
+    ".#####.",
+    ".#...#.",
+    ".#...#.",
+]
+
+
+def converter_grade_para_entrada(grade):
+    if len(grade) != linhas_grade:
+        raise ValueError("A grade precisa ter 9 linhas.")
+
+    entrada = []
+
+    for linha in grade:
+        if len(linha) != colunas_grade:
+            raise ValueError("Cada linha precisa ter 7 pixels.")
+
+        for pixel in linha:
+            if pixel == "#":
+                entrada.append(1)
+            elif pixel == ".":
+                entrada.append(-1)
+            else:
+                raise ValueError("Use somente '#' e '.' na grade.")
+
+    entrada.append(1)  # bias
+    return entrada
+
 if __name__ == "__main__":
     print("Letras:", letras)
     print("Quantidade de fontes:", quantidade_fontes)
@@ -36,3 +70,10 @@ if __name__ == "__main__":
     print("Erro mínimo:", erro_minimo)
     print("Limite de ciclos:", quantidade_maxima_ciclos)
     print("Saída desejada para A:", saidas_desejadas[0])
+
+    entrada_a = converter_grade_para_entrada(padrao_a_fonte_1)
+
+    print("Linhas da grade:", len(padrao_a_fonte_1))
+    print("Pixels na primeira linha:", len(padrao_a_fonte_1[0]))
+    print("Tamanho do vetor com bias:", len(entrada_a))
+    print("Valor do bias:", entrada_a[indice_bias])
