@@ -25,6 +25,16 @@ saidas_desejadas = [
     [-1, -1, -1, -1, -1, -1,  1],  # K
 ]
 
+pesos = []
+
+for indice_neuronio in range(quantidade_neuronios):
+    pesos_do_neuronio = []
+
+    for indice_entrada in range(quantidade_entradas):
+        pesos_do_neuronio.append(0.0)
+
+    pesos.append(pesos_do_neuronio)
+
 padrao_a_fonte_1 = [
     "...#...",
     "...#...",
@@ -35,6 +45,14 @@ padrao_a_fonte_1 = [
     ".#####.",
     ".#...#.",
     ".#...#.",
+]
+
+amostras_treinamento = [
+    {
+        "letra": "A",
+        "fonte": 1,
+        "grade": padrao_a_fonte_1,
+    }
 ]
 
 
@@ -59,6 +77,20 @@ def converter_grade_para_entrada(grade):
     entrada.append(1)  # bias
     return entrada
 
+def preparar_treinamento(amostras):
+    entradas_treinamento = []
+    saidas_treinamento = []
+
+    for amostra in amostras:
+        entrada = converter_grade_para_entrada(amostra["grade"])
+        indice_letra = letras.index(amostra["letra"])
+        saida_desejada = saidas_desejadas[indice_letra]
+
+        entradas_treinamento.append(entrada)
+        saidas_treinamento.append(saida_desejada)
+
+    return entradas_treinamento, saidas_treinamento
+
 if __name__ == "__main__":
     print("Letras:", letras)
     print("Quantidade de fontes:", quantidade_fontes)
@@ -77,3 +109,16 @@ if __name__ == "__main__":
     print("Pixels na primeira linha:", len(padrao_a_fonte_1[0]))
     print("Tamanho do vetor com bias:", len(entrada_a))
     print("Valor do bias:", entrada_a[indice_bias])
+
+    entradas_treinamento, saidas_treinamento = preparar_treinamento(
+        amostras_treinamento
+    )
+
+    print("Amostras preparadas:", len(entradas_treinamento))
+    print("Tamanho da entrada:", len(entradas_treinamento[0]))
+    print("Saída desejada:", saidas_treinamento[0])
+
+    print("Quantidade de neurônios na matriz:", len(pesos))
+    print("Pesos por neurônio", len(pesos[0]))
+    print("Primeiro peso do neurônio A:", pesos[0][0])
+    print("Peso do bias do neurônio A:", pesos[0][indice_bias])
