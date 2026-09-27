@@ -138,6 +138,23 @@ def calcular_erro_quadratico_medio(
 
 
 
+def atualizar_pesos(entrada, saida_desejada, pesos_atuais):
+    for indice_neuronio in range(len(pesos_atuais)):
+        saida_calculada = calcular_saida_linear(
+            entrada,
+            pesos_atuais[indice_neuronio],
+        )
+
+        erro = saida_desejada[indice_neuronio] - saida_calculada
+
+        for indice_entrada in range(len(entrada)):
+            delta_peso = (taxa_aprendizagem * erro * entrada[indice_entrada])
+
+            pesos_atuais[indice_neuronio][indice_entrada] += delta_peso
+
+
+
+
 def preparar_treinamento(amostras):
     entradas_treinamento = []
     saidas_treinamento = []
@@ -205,3 +222,12 @@ if __name__ == "__main__":
 
     print("Saída linear do exemplo", saida_exemplo)
     print("Saída inicial do neurônio A:", calcular_saida_linear(entrada_a, pesos[0]),)
+
+    atualizar_pesos(
+        entradas_treinamento[0],
+        saidas_treinamento[0],
+        pesos,
+    )
+
+    print("Pesos A após uma atualização:", pesos[0][:5])
+    print("Peso de bias A após atualização", pesos[0][indice_bias])
