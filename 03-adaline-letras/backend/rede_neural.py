@@ -1,7 +1,9 @@
 letras = ["A", "B", "C", "D", "E", "J", "K"]
 
+
 quantidade_fontes = 3
 quantidade_padroes = quantidade_fontes * len(letras)
+
 
 linhas_grade = 9
 colunas_grade = 7
@@ -9,11 +11,14 @@ quantidade_pixels = linhas_grade * colunas_grade
 indice_bias = quantidade_pixels
 quantidade_entradas = quantidade_pixels + 1
 
+
 quantidade_neuronios = len(letras)
+
 
 taxa_aprendizagem = 0.002
 erro_minimo = 0.0001
 quantidade_maxima_ciclos = 1000
+
 
 saidas_desejadas = [
     [ 1, -1, -1, -1, -1, -1, -1],  # A
@@ -25,7 +30,9 @@ saidas_desejadas = [
     [-1, -1, -1, -1, -1, -1,  1],  # K
 ]
 
+
 pesos = []
+
 
 for indice_neuronio in range(quantidade_neuronios):
     pesos_do_neuronio = []
@@ -34,6 +41,7 @@ for indice_neuronio in range(quantidade_neuronios):
         pesos_do_neuronio.append(0.0)
 
     pesos.append(pesos_do_neuronio)
+
 
 padrao_a_fonte_1 = [
     "...#...",
@@ -47,6 +55,7 @@ padrao_a_fonte_1 = [
     ".#...#.",
 ]
 
+
 amostras_treinamento = [
     {
         "letra": "A",
@@ -54,6 +63,8 @@ amostras_treinamento = [
         "grade": padrao_a_fonte_1,
     }
 ]
+
+
 
 
 def converter_grade_para_entrada(grade):
@@ -77,6 +88,9 @@ def converter_grade_para_entrada(grade):
     entrada.append(1)  # bias
     return entrada
 
+
+
+
 def calcular_saida_linear(entrada, pesos_neuronio):
     if len(entrada) != len(pesos_neuronio):
         raise ValueError("A entrada e os pesos precisam ter o mesmo tamanho.")
@@ -87,6 +101,42 @@ def calcular_saida_linear(entrada, pesos_neuronio):
         somatorio += entrada[indice] * pesos_neuronio[indice]
 
     return somatorio
+
+
+
+
+def calcular_erro_quadratico_medio(
+        entradas_treinamento,
+        saidas_treinamento,
+        pesos_atuais,
+):
+    if len(entradas_treinamento) != len(saidas_treinamento):
+        raise ValueError("Cada entrada precisa ter uma saída desejada.")
+
+    if len(entradas_treinamento) == 0:
+        raise ValueError("A lista de treinamento não pode estar vazia.")
+
+    soma_erros_quadrados = 0.0
+    quantidade_respostas = 0
+
+    for indice_padrao in range(len(entradas_treinamento)):
+        entrada = entradas_treinamento[indice_padrao]
+        saida_desejada = saidas_treinamento[indice_padrao]
+
+        for indice_neuronio in range(len(pesos_atuais)):
+            saida_calculada = calcular_saida_linear(
+                entrada,
+                pesos_atuais[indice_neuronio],
+            )
+
+            erro = saida_desejada[indice_neuronio] - saida_calculada
+            soma_erros_quadrados += erro ** 2
+            quantidade_respostas += 1
+
+    return soma_erros_quadrados / quantidade_respostas
+
+
+
 
 def preparar_treinamento(amostras):
     entradas_treinamento = []
@@ -101,6 +151,9 @@ def preparar_treinamento(amostras):
         saidas_treinamento.append(saida_desejada)
 
     return entradas_treinamento, saidas_treinamento
+
+
+
 
 if __name__ == "__main__":
     print("Letras:", letras)
@@ -128,6 +181,14 @@ if __name__ == "__main__":
     print("Amostras preparadas:", len(entradas_treinamento))
     print("Tamanho da entrada:", len(entradas_treinamento[0]))
     print("Saída desejada:", saidas_treinamento[0])
+
+    eqm_inicial = calcular_erro_quadratico_medio(
+        entradas_treinamento,
+        saidas_treinamento,
+        pesos
+    )
+
+    print("EQM inicial:", eqm_inicial)
 
     print("Quantidade de neurônios na matriz:", len(pesos))
     print("Pesos por neurônio", len(pesos[0]))
