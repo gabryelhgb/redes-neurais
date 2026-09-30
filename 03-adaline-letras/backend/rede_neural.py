@@ -366,7 +366,6 @@ amostras_treinamento = [
 
 
 
-
 def converter_grade_para_entrada(grade, permitir_ruido=False):
     if len(grade) != linhas_grade:
         raise ValueError("A grade precisa ter 9 linhas.")
