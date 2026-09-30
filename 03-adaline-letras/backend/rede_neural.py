@@ -367,23 +367,23 @@ amostras_treinamento = [
 
 
 
-def converter_grade_para_entrada(grade):
+def converter_grade_para_entrada(grade, permitir_ruido=False):
     if len(grade) != linhas_grade:
         raise ValueError("A grade precisa ter 9 linhas.")
 
     entrada = []
+    valores_permitidos = (-1, 0, 1) if permitir_ruido else(-1, 1)
 
     for linha in grade:
         if len(linha) != colunas_grade:
             raise ValueError("Cada linha precisa ter 7 pixels.")
 
         for pixel in linha:
-            if pixel not in (1, -1):
-                raise ValueError("Cada pixel precisa valer 1 ou -1.")
-
+            if pixel not in valores_permitidos:
+                raise ValueError("Pixel inválido na grade.")
             entrada.append(pixel)
 
-    entrada.append(1)  # bias
+    entrada.append(1) # Um único bias por letra
     return entrada
 
 
@@ -470,64 +470,71 @@ def preparar_treinamento(amostras):
 
 
 
+def treinar_rede():
+    entradas, saidas = preparar_treinamento(amostras_treinamento)
+
+    # Cada treinamento começa novamente com pesos zerados
+    for indice_neuronio in range(quantidade_neuronios):
+        for indice_entrada in range(quantidade_entradas):
+            pesos[indice_neuronio][indice_entrada] = 0.0
+
+    historico_eqm = []
+
+    for ciclo in range(1, quantidade_maxima_ciclos + 1):
+        for indice_padrao in range(len(entradas)):
+            atualizar_pesos(
+                entradas[indice_padrao],
+                saidas[indice_padrao],
+                pesos,
+            )
+
+        eqm = calcular_erro_quadratico_medio(entradas, saidas, pesos)
+        historico_eqm.append(eqm)
+
+        if eqm <= erro_minimo:
+            break
+
+    return historico_eqm
+
+
+
+
+def reconhecer_grade(grade):
+    entrada = converter_grade_para_entrada(grade, permitir_ruido=True)
+    letras_reconhecidas = []
+
+    for indice_neuronio in range(quantidade_neuronios):
+        saida = calcular_saida_linear(
+            entrada,
+            pesos[indice_neuronio],
+        )
+
+        if saida >= 0:
+            letras_reconhecidas.append(letras[indice_neuronio])
+
+    return letras_reconhecidas
+
+
+
+
 if __name__ == "__main__":
-    print("Letras:", letras)
-    print("Quantidade de fontes:", quantidade_fontes)
-    print("Padrões de treinamento:", quantidade_padroes)
-    print("Pixels por letra:", quantidade_pixels)
-    print("Entradas com bias:", quantidade_entradas)
-    print("Neurônios de saída:", quantidade_neuronios)
-    print("Taxa de aprendizagem:", taxa_aprendizagem)
-    print("Erro mínimo:", erro_minimo)
-    print("Limite de ciclos:", quantidade_maxima_ciclos)
-    print("Saída desejada para A:", saidas_desejadas[0])
+    historico_eqm = treinar_rede()
 
-    entrada_a = converter_grade_para_entrada(
-        amostras_treinamento[0]["grade"]
-    )
+    print("Ciclos:", len(historico_eqm))
+    print("EQM final:", historico_eqm[-1])
 
-    print("Linhas da grade:", len(amostras_treinamento[0]["grade"]))
-    print("Pixels na primeira linha:", len(amostras_treinamento[0]["grade"][0]))
-    print("Tamanho do vetor com bias:", len(entrada_a))
-    print("Valor do bias:", entrada_a[indice_bias])
+    acertos = 0
 
-    fontes, saidas_treinamento = preparar_treinamento(
-        amostras_treinamento
-    )
+    for amostra in amostras_treinamento:
+        resposta = reconhecer_grade(amostra["grade"])
+        esperado = [amostra["letra"]]
 
-    print("Fontes preparadas:", len(fontes))
-    print("Entradas por fonte:", len(fontes[0]))
-    print("Saída desejada:", saidas_treinamento[0])
+        print(
+            f"Fonte {amostra['fonte']} - "
+            f"esperando {amostra['letra']}: {resposta}"
+        )
 
-    eqm_inicial = calcular_erro_quadratico_medio(
-        fontes,
-        saidas_treinamento,
-        pesos
-    )
+        if resposta == esperado:
+            acertos += 1
 
-    print("EQM inicial:", eqm_inicial)
-
-    print("Quantidade de neurônios na matriz:", len(pesos))
-    print("Pesos por neurônio", len(pesos[0]))
-    print("Primeiro peso do neurônio A:", pesos[0][0])
-    print("Peso do bias do neurônio A:", pesos[0][indice_bias])
-
-    entrada_exemplo = [1, -1, 1]
-    pesos_exemplo = [0.5, 0.25, 1.0]
-
-    saida_exemplo = calcular_saida_linear(
-        entrada_exemplo,
-        pesos_exemplo,
-    )
-
-    print("Saída linear do exemplo", saida_exemplo)
-    print("Saída inicial do neurônio A:", calcular_saida_linear(entrada_a, pesos[0]),)
-
-    atualizar_pesos(
-        fontes[0],
-        saidas_treinamento[0],
-        pesos,
-    )
-
-    print("Pesos A após uma atualização:", pesos[0][:5])
-    print("Peso de bias A após atualização", pesos[0][indice_bias])
+    print(f"Acertos: {acertos}/{len(amostras_treinamento)}")
