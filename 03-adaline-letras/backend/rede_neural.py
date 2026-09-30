@@ -1,3 +1,5 @@
+import random
+
 letras = ["A", "B", "C", "D", "E", "J", "K"]
 
 
@@ -473,7 +475,7 @@ def treinar_rede():
     # Cada treinamento começa novamente com pesos zerados
     for indice_neuronio in range(quantidade_neuronios):
         for indice_entrada in range(quantidade_entradas):
-            pesos[indice_neuronio][indice_entrada] = 0.0
+            pesos[indice_neuronio][indice_entrada] = random.uniform(-0.01, 0.01)
 
     historico_eqm = [
         calcular_erro_quadratico_medio(entradas, saidas, pesos)
