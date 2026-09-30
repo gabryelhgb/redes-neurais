@@ -36,12 +36,13 @@ def treinar():
 
     treinamento_concluido = False
     historico_eqm = rede_neural.treinar_rede()
+    variacao_final = abs(historico_eqm[-1] - historico_eqm[-2])
     treinamento_concluido = True
 
     return {
-        "ciclos": len(historico_eqm),
+        "ciclos": len(historico_eqm) - 1,
         "eqm_final": historico_eqm[-1],
-        "convergiu": historico_eqm[-1] <= rede_neural.erro_minimo,
+        "convergiu": variacao_final <= rede_neural.erro_minimo,
         "historico_eqm": historico_eqm,
     }
 

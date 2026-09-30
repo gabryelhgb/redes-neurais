@@ -415,7 +415,6 @@ def calcular_erro_quadratico_medio(
         raise ValueError("A lista de treinamento não pode estar vazia.")
 
     soma_erros_quadrados = 0.0
-    quantidade_respostas = 0
 
     for indice_padrao in range(len(entradas_treinamento)):
         entrada = entradas_treinamento[indice_padrao]
@@ -429,9 +428,8 @@ def calcular_erro_quadratico_medio(
 
             erro = saida_desejada[indice_neuronio] - saida_calculada
             soma_erros_quadrados += erro ** 2
-            quantidade_respostas += 1
 
-    return soma_erros_quadrados / quantidade_respostas
+    return soma_erros_quadrados / len(entradas_treinamento)
 
 
 
@@ -478,7 +476,9 @@ def treinar_rede():
         for indice_entrada in range(quantidade_entradas):
             pesos[indice_neuronio][indice_entrada] = 0.0
 
-    historico_eqm = []
+    historico_eqm = [
+        calcular_erro_quadratico_medio(entradas, saidas, pesos)
+    ]
 
     for ciclo in range(1, quantidade_maxima_ciclos + 1):
         for indice_padrao in range(len(entradas)):
@@ -491,7 +491,9 @@ def treinar_rede():
         eqm = calcular_erro_quadratico_medio(entradas, saidas, pesos)
         historico_eqm.append(eqm)
 
-        if eqm <= erro_minimo:
+        variacao = abs(historico_eqm[-1] - historico_eqm[-2])
+
+        if variacao <= erro_minimo:
             break
 
     return historico_eqm
@@ -520,7 +522,7 @@ def reconhecer_grade(grade):
 if __name__ == "__main__":
     historico_eqm = treinar_rede()
 
-    print("Ciclos:", len(historico_eqm))
+    print("Ciclos:", len(historico_eqm) - 1)
     print("EQM final:", historico_eqm[-1])
 
     acertos = 0

@@ -100,13 +100,26 @@ export default function Home() {
 
   const historico = treinamento?.historico_eqm ?? [];
   const maiorEqm = Math.max(1, ...historico);
+
   const pontosGrafico = historico
     .map((valor, indice) => {
-      const x = 20 + (indice / Math.max(1, historico.length - 1)) * 560;
-      const y = 170 - (valor / maiorEqm) * 145;
+      const x = 60 + (indice / Math.max(1, historico.length - 1)) * 540;
+      const y = 170 - (valor / maiorEqm) * 150;
       return `${x},${y}`;
     })
     .join(" ");
+
+  const pontosArea = `60,170 ${pontosGrafico} 600,170`;
+
+  const marcasEqm = [1, 0.75, 0.5, 0.25, 0].map((fracao) => ({
+    valor: maiorEqm * fracao,
+    y: 170 - fracao * 150,
+  }));
+
+  const marcasCiclos = [0, 0.25, 0.5, 0.75, 1].map((fracao) => ({
+    ciclo: Math.round(fracao * (treinamento?.ciclos ?? 0)),
+    x: 60 + fracao * 540,
+  }));
 
   function pintar(linha: number, coluna: number, valor: number) {
     setGradeTeste((gradeAnterior) => {
@@ -310,24 +323,37 @@ export default function Home() {
                   </p>
 
                   <svg
-                    viewBox="0 0 600 200"
+                    viewBox="0 0 640 210"
                     role="img"
                     aria-label="Gráfico do erro quadrático médio por ciclo"
                     className="mt-4 w-full"
                   >
-                    <line
-                      x1="20"
-                      y1="170"
-                      x2="580"
-                      y2="170"
-                      stroke="#94a3b8"
-                    />
-                    <line
-                      x1="20"
-                      y1="20"
-                      x2="20"
-                      y2="170"
-                      stroke="#94a3b8"
+                    {marcasEqm.map((marca, indice) => (
+                      <g key={indice}>
+                        <line
+                          x1="60"
+                          y1={marca.y}
+                          x2="600"
+                          y2={marca.y}
+                          stroke="#cbd5e1"
+                          strokeDasharray="4 4"
+                        />
+                        <text
+                          x="52"
+                          y={marca.y + 4}
+                          textAnchor="end"
+                          fontSize="11"
+                          fill="#475569"
+                        >
+                          {marca.valor.toFixed(2)}
+                        </text>
+                      </g>
+                    ))}
+
+                    <polygon
+                      points={pontosArea}
+                      fill="#10b981"
+                      fillOpacity="0.3"
                     />
                     <polyline
                       points={pontosGrafico}
@@ -335,12 +361,29 @@ export default function Home() {
                       stroke="#047857"
                       strokeWidth="3"
                     />
-                    <text x="20" y="190" fontSize="12" fill="#475569">
-                      1
-                    </text>
-                    <text x="540" y="190" fontSize="12" fill="#475569">
-                      {treinamento.ciclos} ciclos
-                    </text>
+
+                    <line x1="60" y1="20" x2="60" y2="170" stroke="#94a3b8" />
+
+                    {marcasCiclos.map((marca, indice) => (
+                      <g key={indice}>
+                        <line
+                          x1={marca.x}
+                          y1="170"
+                          x2={marca.x}
+                          y2="175"
+                          stroke="#94a3b8"
+                        />
+                        <text
+                          x={marca.x}
+                          y="195"
+                          textAnchor="middle"
+                          fontSize="11"
+                          fill="#475569"
+                        >
+                          {marca.ciclo}
+                        </text>
+                      </g>
+                    ))}
                   </svg>
                 </>
               ) : (
