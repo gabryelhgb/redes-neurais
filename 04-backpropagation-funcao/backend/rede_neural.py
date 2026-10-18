@@ -95,26 +95,118 @@ def calcular_eqm(amostras, rede):
 
 
 
-if __name__ == "__main__":
-    amostras = gerar_amostras()
-    rede = inicializar_rede()
+def criar_variacoes_zeradas():
+    return {
+        "v": [0.0] * QUANTIDADE_NEURONIOS_OCULTOS,
+        "bias_v": [0.0] * QUANTIDADE_NEURONIOS_OCULTOS,
+        "w": [0.0] * QUANTIDADE_NEURONIOS_OCULTOS,
+        "bias_w": 0.0,
+    }
 
-    ocultas, previsao = propagar_entrada(amostras[25][0], rede)
 
-    print("Amostras: ", len(amostras))
-    print("Primeiro x: ", amostras[0][0])
-    print("Último x: ", amostras[-1][0])
-    print("Neurônios ocultos: ", len(ocultas))
 
-    quantidade_parametros = (
-        len(rede["v"])
-        + len(rede["bias_v"])
-        + len(rede["w"])
-        + 1 # bias_w
+def treinar_amostra(x, desejado, rede, anteriores, taxa, momento):
+    ocultas, previsto = propagar_entrada(x, rede)
+
+    delta_saida = (
+        (desejado - previsto)
+        * derivada_pela_saida(previsto)
     )
 
-    print("Parâmetros ajustáveis: ", quantidade_parametros)
-    print("Ativação em zero: ", funcao_ativacao(0))
-    print("Derivada em zero: ", derivada_pela_saida(0))
-    print("Previsão antes do treino: ", previsao)
-    print("EQM antes do treino: ", calcular_eqm(amostras, rede))
+    # Usamos os pesos atuais, antes de atualizar eles.
+    deltas_ocultos = []
+
+    for indice in range(QUANTIDADE_NEURONIOS_OCULTOS):
+        delta = (
+            delta_saida
+            * rede["w"][indice]
+            * derivada_pela_saida(ocultas[indice])
+        )
+        deltas_ocultos.append(delta)
+
+    #Agora podemos atualizar os pesos
+    for indice in range(QUANTIDADE_NEURONIOS_OCULTOS):
+        variacao_w = (
+            taxa * delta_saida * ocultas[indice]
+            + momento * anteriores["w"][indice]
+        )
+
+        variacao_v = (
+            taxa * deltas_ocultos[indice] * x
+            + momento * anteriores["v"][indice]
+        )
+
+        variacao_bias_v = (
+            taxa * deltas_ocultos[indice]
+            + momento * anteriores["bias_v"][indice]
+        )
+
+        rede["w"][indice] += variacao_w
+        rede["v"][indice] += variacao_v
+        rede["bias_v"][indice] += variacao_bias_v
+
+        # Guardamos os ajustes para a proxima amostra
+        anteriores["w"][indice] = variacao_w
+        anteriores["v"][indice] = variacao_v
+        anteriores["bias_v"][indice] = variacao_bias_v
+
+    variacao_bias_w = (
+        taxa * delta_saida
+        + momento * anteriores["bias_w"]
+    )
+
+    rede["bias_w"] += variacao_bias_w
+    anteriores["bias_w"] = variacao_bias_w
+
+
+
+def treinar_rede(
+        taxa = TAXA_APRENDIZAGEM,
+        momento = MOMENTO,
+        ciclos = QUANTIDADE_CICLOS,
+        limite_pesos = LIMITE_PESOS,
+        semente = 42
+):
+    amostras = gerar_amostras()
+    rede = inicializar_rede(limite_pesos, semente)
+    anteriores = criar_variacoes_zeradas()
+
+    historico = [calcular_eqm(amostras, rede)]
+
+    for ciclo in range(1, ciclos + 1):
+        for x, desejado in amostras:
+            treinar_amostra(x, desejado, rede, anteriores, taxa, momento)
+
+        eqm = calcular_eqm(amostras, rede)
+
+        if not math.isfinite(eqm):
+            raise ValueError("O treinamento gerou valores inválidos. "
+            "Reduza a taxa de aprendizagem ou o momento.")
+
+        historico.append(eqm)
+
+        if ciclo % 5000 == 0:
+            print(f"Ciclo {ciclo}: EQM = {eqm:.8f}")
+
+    return rede, historico
+
+if __name__ == "__main__":
+    print("Iniciando treinamento...")
+
+    rede, historico = treinar_rede()
+
+    print("\nTreinamento finalizado")
+    print("Ciclos:", len(historico) - 1)
+    print(f"EQM inicial: {historico[0]:.8f}")
+    print(f"EQM final: {historico[-1]:.8f}")
+
+    print("\nComparação de algumas amostras:")
+    print("x       desejado   previsto")
+
+    amostras = gerar_amostras()
+
+    for indice in (0, 10, 25, 40, 50, 75, 90, 99):
+        x, desejado = amostras[indice]
+        _, previsto = propagar_entrada(x, rede)
+
+        print(f"{x:.4f}  {desejado: .5f}   {previsto: .5f}")
