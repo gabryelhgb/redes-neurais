@@ -239,7 +239,11 @@ export default function Home() {
         {treinando && <p className="muted">Treinamento em andamento. Aguarde; o resultado aparecerá ao terminar.</p>}
         {resultado && (
           <div className="painel grid gap-4 tabular-nums sm:grid-cols-3">
-            <div><p className="muted text-sm">EQM final</p><p className="text-2xl font-semibold">{resultado.eqm_final.toExponential(5)}</p></div>
+            <div>
+              <p className="muted text-sm">EQM final</p>
+              <p className="text-2xl font-semibold">{resultado.eqm_final.toFixed(6)}</p>
+              <p className="muted text-sm"> Notação científica: {resultado.eqm_final.toExponential(5)}</p>
+            </div>
             <div><p className="muted text-sm">Ciclos executados</p><p className="text-2xl font-semibold">{resultado.ciclos.toLocaleString("pt-BR")}</p></div>
             <div><p className="muted text-sm">Tempo de execução</p><p className="text-2xl font-semibold">{resultado.tempo_segundos.toFixed(2)} s</p></div>
           </div>
