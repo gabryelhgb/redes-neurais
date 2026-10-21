@@ -27,3 +27,13 @@ Thumbs.db
 # Arquivos internos de ferramentas de IA
 .openai/
 .codex/
+
+# Arquivos temporários do Microsoft Office
+~$*
+
+# Arquivos de ambiente
+.env.*
+!.env.example
+
+# Cache do TypeScript
+*.tsbuildinfo
